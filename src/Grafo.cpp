@@ -14,7 +14,7 @@ Grafo::Grafo(size_t numeroDeVertices)
 {
     // Inicializa a lista de vértice com seus respectivos IDs.
     this->listaVertices.reserve(numeroDeVertices);
-    for (idvertice_t id = 0; id < numeroDeVertices; ++id) {
+    for (sitecode_t id = 0; id < numeroDeVertices; ++id) {
         this->listaVertices.push_back(Vertice(id));
     }
 }
@@ -27,12 +27,12 @@ Grafo Grafo::gerarDoArquivo(std::istream& arqEntrada)
     return g;
 }
 
-Vertice *Grafo::getVerticeById(idvertice_t id)
+Vertice *Grafo::getVerticeById(sitecode_t id)
 {
     return &this->listaVertices[id];
 }
 
-const Vertice *Grafo::getVerticeById(idvertice_t id) const
+const Vertice *Grafo::getVerticeById(sitecode_t id) const
 {
     return &this->listaVertices[id];
 }
@@ -42,7 +42,7 @@ size_t Grafo::numeroDeVertices() const
     return this->listaVertices.size();
 }
 
-void Grafo::fazerAresta(idvertice_t id1, idvertice_t id2)
+void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2)
 {
     /* Testa se um vértice existe. Caso contrário, lança uma excessão
      * do tipo std::invalid_argument

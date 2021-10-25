@@ -22,7 +22,7 @@ class Grafo {
 
         size_t numeroDeVertices() const;
 
-        void fazerAresta(idvertice_t id1, idvertice_t id2);
+        void fazerAresta(sitecode_t id1, sitecode_t id2);
         void toDots(std::ostream& arqSaida) const;
 
         Grafo algoritmoGuloso() const;
@@ -33,8 +33,8 @@ class Grafo {
 
     private:
         Grafo algoritmoGulosoHelper(double alfa) const;
-        const Vertice *getVerticeById(idvertice_t id) const;
-        Vertice *getVerticeById(idvertice_t id);
+        const Vertice *getVerticeById(sitecode_t id) const;
+        Vertice *getVerticeById(sitecode_t id);
 };
 
 #endif // GRAFO_HPP

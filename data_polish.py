@@ -3,7 +3,30 @@ import numpy as np
 
 df = pd.read_excel('Dataset.xlsx')
 
+# Apaga colunas que não usaremos
+df.drop(['Current CS/MIN','Current CS/ROP','Current CS/MAX'], axis=1, inplace=True)
 
+# Calcula os IDs para agrupamento
+id = np.array([])
+for i in range(0, df.shape[0]):
+    id_calc = df['Supply Site Code'][i] + str(df['SKU'][i]) + df['Location Code'][i] + df['Location Type'][i] + str(df['Scenario'][i])
+    id = np.append(id, id_calc)
+
+df['ID'] = id
+
+agg_func = {'Supply Site Code': 'first', 
+            'SKU': 'first', 
+            'Location Code': 'first',
+            'Location Type': 'first',
+            'MinDOC (Hl)': 'sum',
+            'Reorder Point (Hl)': 'sum',
+            'MaxDOC (Hl)': 'sum',
+            'Closing Stock': 'sum',  
+            'Distributor Orders': 'sum',
+            'Available to Deploy': 'sum',
+            'Scenario': 'first'
+           }
+df = df.groupby(df['ID']).aggregate(agg_func)
 
 # Limpeza comentada pois só será utilizada após merge de iguais
 ###########################################################################
@@ -36,5 +59,6 @@ df = pd.read_excel('Dataset.xlsx')
 # print(supply_sites)
 ###########################################################################
 
-df.to_csv('clearData.csv', index=False)
+# df.to_csv('clearData.csv', index=False)
+df.to_excel('clearData.xlsx', index=False)
 

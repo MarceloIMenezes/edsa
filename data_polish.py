@@ -3,13 +3,9 @@ import numpy as np
 
 df = pd.read_excel('Dataset.xlsx')
 
-###########################################################################
-# Jeito chique que não deu certo
-# cenario0 = df.index[df['Scenario'] == 0]
-# print(cenario0)
-# df.drop(cenario0, inplace=True)
-###########################################################################
 
+
+# Limpeza comentada pois só será utilizada após merge de iguais
 ###########################################################################
 # supply_sites = []
 # supply_sites = np.array(supply_sites)
@@ -36,9 +32,9 @@ df = pd.read_excel('Dataset.xlsx')
 # print('Cenários 0 eliminados: ' + str(contaCenarios0))
 # print('MinMaxDoc  eliminados: ' + str(contaMinMaxDOC))
 # print('MaxDoc 0   eliminados: ' + str(contaMaxDOC0))
-###########################################################################
-
-df.to_excel('clearData.xlsx', index=False)
-
 
 # print(supply_sites)
+###########################################################################
+
+df.to_csv('clearData.csv', index=False)
+

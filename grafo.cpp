@@ -9,8 +9,11 @@
 
 #include "Grafo.hpp"
 
-int main(int argc, const char *const argv[])
-{
-    // TODO
-    return 0;
+extern "C" {
+    Grafo *grafo_new(size_t size) { return new Grafo(size); }
+
+    size_t grafo_numero_de_vertices(const Grafo *g)
+    {
+        return g->numeroDeVertices();
+    }
 }

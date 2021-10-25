@@ -1,9 +1,5 @@
-CXX=g++
-INC=-I ./include
-CFLAGS=-std=c++11 -W -Wall -O2 -pedantic $(INC)
-
-execGrupo4: main.cpp ./src/*
-	$(CXX) $(CFLAGS) -o $@ $^
+libgrafo.so: main.cpp ./src/*
+	g++ -shared -Wl,-soname,$@ -fPIC -o $@ $^ -I ./include
 
 clean:
 	rm -f execGrupo4

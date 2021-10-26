@@ -9,24 +9,32 @@ df.drop(['Current CS/MIN','Current CS/ROP','Current CS/MAX'], axis=1, inplace=Tr
 # Calcula os IDs para agrupamento
 id = np.array([])
 for i in range(0, df.shape[0]):
-    id_calc = df['Supply Site Code'][i] + str(df['SKU'][i]) + df['Location Code'][i] + df['Location Type'][i] + str(df['Scenario'][i])
+    id_calc = df['Supply Site Code'][i] + str(df['SKU'][i]) + df['Location Code'][i] + df['Location Type'][i]
     id = np.append(id, id_calc)
-
 df['ID'] = id
 
-agg_func = {'Supply Site Code': 'first', 
-            'SKU': 'first', 
-            'Location Code': 'first',
-            'Location Type': 'first',
-            'MinDOC (Hl)': 'sum',
-            'Reorder Point (Hl)': 'sum',
-            'MaxDOC (Hl)': 'sum',
-            'Closing Stock': 'sum',  
-            'Distributor Orders': 'sum',
-            'Available to Deploy': 'sum',
-            'Scenario': 'first'
-           }
-df = df.groupby(df['ID']).aggregate(agg_func)
+# Verifica se existem valores iguais após a ordenação
+df.sort_values(['ID'], inplace=True)
+for i in range(0, df.shape[0] - 1):
+    if df['ID'][i] == df['ID'][i+1]:
+        print('O próximo é igual nesse índice:' + str(i))
+
+# Agrupa valores iguais de ID
+# agg_func = {
+#             'Supply Site Code': 'first', 
+#             'SKU': 'first', 
+#             'Location Code': 'first',
+#             'Location Type': 'first',
+#             'MinDOC (Hl)': 'sum',
+#             'Reorder Point (Hl)': 'sum',
+#             'MaxDOC (Hl)': 'sum',
+#             'Closing Stock': 'sum',  
+#             'Distributor Orders': 'sum',
+#             'Available to Deploy': 'sum',
+#             'Scenario': 'first'
+#            }
+# df = df.groupby(df['ID']).aggregate(agg_func)
+
 
 # Limpeza comentada pois só será utilizada após merge de iguais
 ###########################################################################

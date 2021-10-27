@@ -10,31 +10,27 @@
 
 using namespace std;
 
-Grafo::Grafo(size_t numeroDeVertices)
+Grafo::Grafo()
 {
-    // Inicializa a lista de vértice com seus respectivos IDs.
-    this->listaVertices.reserve(numeroDeVertices);
-    for (sitecode_t id = 0; id < numeroDeVertices; ++id) {
-        this->listaVertices.push_back(Vertice(id)); // TODO: fazer uma hash ligando o location/supply code nesse id aqui
-    }
 }
 
 Grafo Grafo::gerarDoArquivo(std::istream& arqEntrada)
 {
-    size_t nVertices;
-
-    Grafo g(nVertices);
-    return g;
+    return Grafo();
 }
 
-Vertice *Grafo::getVerticeById(sitecode_t id)
+Vertice *Grafo::getVerticeById(const sitecode_t& id)
 {
-    return &this->listaVertices[id];
+    auto it = this->listaVertices.find(id);
+
+    return (it == this->listaVertices.end()) ? nullptr : &it->second;
 }
 
-const Vertice *Grafo::getVerticeById(sitecode_t id) const
+const Vertice *Grafo::getVerticeById(const sitecode_t& id) const
 {
-    return &this->listaVertices[id];
+    auto it = this->listaVertices.find(id);
+
+    return (it == this->listaVertices.end()) ? nullptr : &it->second;
 }
 
 size_t Grafo::numeroDeVertices() const
@@ -80,54 +76,51 @@ void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2) // TODO: adicionar o res
 
 void Grafo::toDots(std::ostream& arqSaida) const
 {
-    arqSaida << "graph {\n";
-    for (const Vertice& v : this->listaVertices) {
-        for (const Aresta& a : v.listaDeAdjacencia()) {
-            if (v.id() < a.idDestino()) {
-                arqSaida << "\t" << v.id() << " -- " << a.idDestino() << "\n";
-            }
-        }
-    }
-    arqSaida << "}";
+    // TODO: adaptar pra usar com novo container
+    /* arqSaida << "graph {\n"; */
+    /* for (const Vertice& v : this->listaVertices) { */
+    /*     for (const Aresta& a : v.listaDeAdjacencia()) { */
+    /*         if (v.id() < a.idDestino()) { */
+    /*             arqSaida << "\t" << v.id() << " -- " << a.idDestino() << "\n"; */
+    /*         } */
+    /*     } */
+    /* } */
+    /* arqSaida << "}"; */
 }
 
-std::vector<Aresta> ordenaCandidatos(const std::vector<Vertice> &listaVertices, size_t numeroDeArestas)
+std::vector<Aresta> ordenaCandidatos(const Grafo::vertexcontainer_t &listaVertices, size_t numeroDeArestas)
 {
     std::vector<Aresta> lc;
     lc.reserve(numeroDeArestas);
-    for (const Vertice v : listaVertices) {
-        for (const Aresta a : v.listaDeAdjacencia()) {
+    for (const std::pair<sitecode_t, Vertice>& keyVal: listaVertices) {
+        for (const Aresta a : keyVal.second.listaDeAdjacencia()) {
             lc.push_back(a);
         }
     }
-    std::sort(lc.begin(), lc.end(),
-              [](const Aresta &a, const Aresta &b)
-              {
-                  if (a.distributionOrder() > b.distributionOrder())
-                  {
-                      return false;
-                  }
-                  if (a.distributionOrder() < b.distributionOrder())
-                  {
-                      return true;
-                  }
-                  if ((a.reorderPoint() - a.closingStock()) > (b.reorderPoint() - b.closingStock()))
-                  {
-                      return false;
-                  }
-                  return true;
-              });
+    std::sort(lc.begin(), lc.end(), [](const Aresta &a, const Aresta &b) {
+            if (a.distributionOrder() > b.distributionOrder()) {
+            return false;
+            }
+            if (a.distributionOrder() < b.distributionOrder())
+            {
+            return true;
+            }
+            if ((a.reorderPoint() - a.closingStock()) > (b.reorderPoint() - b.closingStock())) {
+            return false;
+            }
+            return true;
+            });
     return lc;
 }
 
 Grafo Grafo::algoritmoGulosoHelper(double alfa, size_t cenario)
 {
 #define AVAILABLETODEPLOY(origem, produto)          \
-this->getVerticeById(origem)->available(produto)
-   
-    Grafo F(this->numeroDeVertices());
+    this->getVerticeById(origem)->available(produto)
+
+    Grafo F;
     std::vector<Aresta> lc = ordenaCandidatos(this->listaVertices, this->numeroDeArestas());
-    
+
     int i;
     do {
         size_t aux = lc.size() * alfa;
@@ -210,10 +203,10 @@ static inline void atualizarProbabilidades(unique_ptr<double[]>& P,
 }
 
 Grafo Grafo::algoritmoGulosoRandomizadoReativo(const vector<double>& alfas,
-        size_t nIteracoes, size_t bloco, size_t cenario) const
+        size_t nIteracoes, size_t bloco, size_t cenario)
 {
-    Grafo melhorSol(this->numeroDeVertices());
-    Grafo solAux(this->numeroDeVertices());
+    Grafo melhorSol;
+    Grafo solAux;
 
     unique_ptr<double[]> P(new double[alfas.size()]);
     unique_ptr<Media[]> A(new Media[alfas.size()]);

@@ -3,7 +3,7 @@
 
 #include <string>
 
-using sitecode_t = size_t;
+using sitecode_t = std::string;
 using doc_t = double;
 using product_t = std::string;
 

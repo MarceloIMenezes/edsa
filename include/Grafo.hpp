@@ -27,7 +27,6 @@ class Grafo {
         void fazerAresta(sitecode_t id1, sitecode_t id2);
         void toDots(std::ostream& arqSaida) const;
 
-        Grafo algoritmoGuloso() const;
         Grafo algoritmoGulosoRandomizadoReativo(
                 const std::vector<double>& alfas, size_t nIteracoes,
                 size_t tamanhoBloco, size_t cenario) const;

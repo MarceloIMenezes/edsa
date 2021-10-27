@@ -14,6 +14,7 @@ class Grafo {
 
         // Atributos
         vertexlist_t listaVertices;
+        size_t _numeroDeArestas;
 
     public:
         Grafo(size_t numeroDeVertices);
@@ -21,18 +22,18 @@ class Grafo {
         static Grafo gerarDoArquivo(std::istream& arqEntrada);
 
         size_t numeroDeVertices() const;
+        size_t numeroDeArestas() const;
 
         void fazerAresta(sitecode_t id1, sitecode_t id2);
         void toDots(std::ostream& arqSaida) const;
 
         Grafo algoritmoGuloso() const;
-        Grafo algoritmoGulosoRandomizado(double alfa, size_t nIteracoes) const;
         Grafo algoritmoGulosoRandomizadoReativo(
                 const std::vector<double>& alfas, size_t nIteracoes,
-                size_t tamanhoBloco) const;
+                size_t tamanhoBloco, size_t cenario) const;
 
     private:
-        Grafo algoritmoGulosoHelper(double alfa) const;
+        Grafo algoritmoGulosoHelper(double alfa, size_t cenario);
         const Vertice *getVerticeById(sitecode_t id) const;
         Vertice *getVerticeById(sitecode_t id);
 };

@@ -15,7 +15,7 @@ Grafo::Grafo(size_t numeroDeVertices)
     // Inicializa a lista de vértice com seus respectivos IDs.
     this->listaVertices.reserve(numeroDeVertices);
     for (sitecode_t id = 0; id < numeroDeVertices; ++id) {
-        this->listaVertices.push_back(Vertice(id));
+        this->listaVertices.push_back(Vertice(id)); // TODO: fazer uma hash ligando o location/supply code nesse id aqui
     }
 }
 
@@ -42,7 +42,12 @@ size_t Grafo::numeroDeVertices() const
     return this->listaVertices.size();
 }
 
-void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2)
+size_t Grafo::numeroDeArestas() const
+{
+    return this->_numeroDeArestas;
+}
+
+void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2) // TODO: adicionar o resto dos parametros
 {
     /* Testa se um vértice existe. Caso contrário, lança uma excessão
      * do tipo std::invalid_argument
@@ -57,20 +62,20 @@ void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2)
     } while (0)
 
     if (id1 != id2) {
-        Vertice *v1 = this->getVerticeById(id1);
-        Vertice *v2 = this->getVerticeById(id2);
+        Vertice *origem = this->getVerticeById(id1);
+        Vertice *destino = this->getVerticeById(id2);
 
-        TEST_VERTICE(v1, id1);
-        TEST_VERTICE(v2, id2);
+        TEST_VERTICE(origem, id1);
+        TEST_VERTICE(destino, id2);
 
-        v1->addAdjacente(id2);
-        v2->addAdjacente(id1);
+        origem->addAdjacente(id2);
     } else {
         Vertice *v = this->getVerticeById(id1);
 
         TEST_VERTICE(v, id1);
         v->addAdjacente(id1);
     }
+    this->_numeroDeArestas++;
 }
 
 void Grafo::toDots(std::ostream& arqSaida) const
@@ -86,14 +91,70 @@ void Grafo::toDots(std::ostream& arqSaida) const
     arqSaida << "}";
 }
 
-Grafo Grafo::algoritmoGulosoHelper(double alfa) const
+std::vector<Aresta> ordenaCandidatos(const std::vector<Vertice> &listaVertices, size_t numeroDeArestas)
 {
+    std::vector<Aresta> lc;
+    lc.reserve(numeroDeArestas);
+    for (const Vertice v : listaVertices) {
+        for (const Aresta a : v.listaDeAdjacencia()) {
+            lc.push_back(a);
+        }
+    }
+    std::sort(lc.begin(), lc.end(),
+              [](const Aresta &a, const Aresta &b)
+              {
+                  if (a.distributionOrder() > b.distributionOrder())
+                  {
+                      return false;
+                  }
+                  if (a.distributionOrder() < b.distributionOrder())
+                  {
+                      return true;
+                  }
+                  if ((a.reorderPoint() - a.closingStock()) > (b.reorderPoint() - b.closingStock()))
+                  {
+                      return false;
+                  }
+                  return true;
+              });
+    return lc;
+}
+
+Grafo Grafo::algoritmoGulosoHelper(double alfa, size_t cenario)
+{
+#define AVAILABLETODEPLOY(origem, produto)          \
+this->getVerticeById(origem)->available(produto)
+   
     Grafo F(this->numeroDeVertices());
+    std::vector<Aresta> lc = ordenaCandidatos(this->listaVertices, this->numeroDeArestas());
+    
+    int i;
+    do {
+        size_t aux = lc.size() * alfa;
+        size_t idx = (aux < 2) ? 0 : (rand() % aux);
+
+        Aresta& a = lc[idx];
+        // TODO: distribuir pro candidato (ver no map do vertice origem se tem produto availableToDeploy)
+        // * cenario 1: 
+        // Entregar a todos as cervejarias (exceto Hubs) a capacidade máxima (maxDOC) 
+        // e distribuir aos distribuidores (DIST) sua demanda completa e deixar oq sobrar num Hub
+        Vertice *origemAux = this->getVerticeById(a.idOrigem()); 
+        if (a.distributionOrder() != 0 && AVAILABLETODEPLOY(a.idOrigem(), a.produto())>= a.distributionOrder()) { // ignora maxDoc das DIST
+            origemAux->setAvailable(a.produto() , origemAux->available(a.produto()) - a.distributionOrder());
+            a.setDistributionOrder(0);
+        } else if (a.distributionOrder() != 0) {
+            // distribui tudo q tem disponivel
+            a.setDistributionOrder(a.distributionOrder() - origemAux->available(a.produto()));
+            origemAux->setAvailable(a.produto(), 0);
+        } else if (this->getVerticeById(a.idDestino())->loctype() == "DIST") { // distribuir para nao hub o maxDOC
+
+        }
+    } while (false); // TODO: condição de parada
     return F;
 }
 
-/* Estrutura auxiliar usada no algoritmoGulosoRandomizadoReativo para calcular
- * a média de um alfa
+/*  Estrutura auxiliar usada no algoritmoGulosoRandomizadoReativo para calcular
+   a média de um alfa
  */
 struct Media {
     size_t total;
@@ -149,7 +210,7 @@ static inline void atualizarProbabilidades(unique_ptr<double[]>& P,
 }
 
 Grafo Grafo::algoritmoGulosoRandomizadoReativo(const vector<double>& alfas,
-        size_t nIteracoes, size_t bloco) const
+        size_t nIteracoes, size_t bloco, size_t cenario) const
 {
     Grafo melhorSol(this->numeroDeVertices());
     Grafo solAux(this->numeroDeVertices());
@@ -171,7 +232,7 @@ Grafo Grafo::algoritmoGulosoRandomizadoReativo(const vector<double>& alfas,
     for (i = 1; i <= alfas.size() && i <= nIteracoes; ++i) {
         size_t alfaidx = i - 1;
 
-        solAux = this->algoritmoGulosoHelper(alfas[alfaidx]);
+        solAux = this->algoritmoGulosoHelper(alfas[alfaidx], cenario);
 
     //    atualizarMedias(A, alfaidx);
 
@@ -191,7 +252,7 @@ Grafo Grafo::algoritmoGulosoRandomizadoReativo(const vector<double>& alfas,
 
         size_t alfaidx = selecionaAlfa(P, alfas.size());
 
-        solAux = this->algoritmoGulosoHelper(alfas[alfaidx]);
+        solAux = this->algoritmoGulosoHelper(alfas[alfaidx], cenario);
 
     //    atualizarMedias(A, solAux.eficiencia(), alfaidx);
 

@@ -1,7 +1,8 @@
 #include "Aresta.hpp"
 
-Aresta::Aresta(sitecode_t idVertice, product_t produto, doc_t minDoc, doc_t rP, doc_t maxDoc, doc_t cS, doc_t dO):
-    _idDestino(idVertice),
+Aresta::Aresta(sitecode_t idOrigem, sitecode_t idDestino, product_t produto, doc_t minDoc, doc_t rP, doc_t maxDoc, doc_t cS, doc_t dO):
+    _idOrigem(idOrigem),
+    _idDestino(idDestino),
     _produto(produto),
     _minDoc(minDoc),
     _reorderPoint(rP),
@@ -45,4 +46,9 @@ doc_t Aresta::closingStock() const
 doc_t Aresta::distributionOrder() const
 {
     return this->_distributionOrder;
+}
+
+void Aresta::setDistributionOrder(doc_t newOrder)
+{
+    this->_distributionOrder = newOrder;
 }

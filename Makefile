@@ -1,6 +1,7 @@
 CXX=g++
 INC=-I ./include
-CFLAGS=-std=c++11 -W -Wall -pedantic $(INC)
+CPPFLAGS=
+CFLAGS=-std=c++11 -W -Wall -pedantic $(INC) $(CPPFLAGS)
 
 edsa: main.cpp ./src/*
 	$(CXX) $(CFLAGS) -o $@ $^

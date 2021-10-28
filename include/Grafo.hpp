@@ -21,11 +21,12 @@ class Grafo {
     public:
         Grafo();
 
-        static Grafo gerarDoArquivo(std::istream& arqEntrada);
+        static Grafo fromCsv(std::istream& csvFile);
 
         size_t numeroDeVertices() const;
         size_t numeroDeArestas() const;
 
+        void addVertice(sitecode_t id, loctype_t locationType);
         void fazerAresta(sitecode_t id1, sitecode_t id2);
         void toDots(std::ostream& arqSaida) const;
 

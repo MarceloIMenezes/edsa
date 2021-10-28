@@ -17,6 +17,7 @@ class Vertice {
         std::map<product_t, doc_t> availableToDeploy;
 
     public:
+        Vertice() {};
         Vertice(sitecode_t id, loctype_t loctype);
 
         sitecode_t id() const;

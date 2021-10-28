@@ -32,3 +32,28 @@ bool stringTok(const std::string& s, std::string& dest, char delim, size_t *posp
     }
     return true;
 }
+
+bool csvFieldParser(const std::string &line, std::string &field, size_t *posptr)
+{
+    size_t pos = (posptr) ? (*posptr) : 0;
+
+    if (pos == line.length()) {
+        return false;
+    }
+
+    if (line[pos] == '"') {
+        if (stringTok(line, field, '"', &pos)) {
+            if (pos != line.length()) {
+                ++pos;
+            }
+            size_t commaPos;
+            if ((commaPos = field.find(',')) != std::string::npos) {
+                field[commaPos] = '.';
+            }
+            SET_POSPTR(pos);
+            return true;
+        }
+        return false;
+    }
+    return stringTok(line, field, ',', posptr);
+}

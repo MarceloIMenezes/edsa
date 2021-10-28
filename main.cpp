@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     OPEN_FILE(infile,  argv[1]);
     OPEN_FILE(outfile, argv[2]);
 
-    Grafo g;
+    Grafo g = Grafo::fromCsv(infile);
     try {
         std::cin.exceptions(std::istream::failbit | std::istream::badbit);
         Menu::run(g, outfile);

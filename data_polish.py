@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_excel('/home/stephan/Documentos/Hackathon Ambev/Dataset.xlsx')
+df = pd.read_excel('dataset/dataset.xlsx')
 
 id_columns = ('Supply Site Code', 'SKU', 'Location Code', 'Location Type')
 agg_columns_func = ('first','first','first','first','sum','sum','sum','sum','sum','first','first','first','sum','first')
@@ -77,6 +77,6 @@ def supply_site_count(df):
 df = aggregate(df, id_columns, agg_columns_func)
 df = clear(df)
 
-df.to_csv('../clearData.csv', index=False)
-df.to_excel('clearData.xlsx', index=False)
+df.to_csv('dataset/clearData.csv', index=False)
+df.to_excel('dataset/clearData.xlsx', index=False)
 

@@ -1,39 +1,37 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_excel('../Dataset.xlsx')
+df = pd.read_excel('dataset/dataset.xlsx')
 
-def aggregate(df):
+id_columns = ('Supply Site Code', 'SKU', 'Location Code', 'Location Type')
+agg_columns_func = ('first','first','first','first','sum','sum','sum','sum','sum','first','first','first','sum','first')
+
+def aggregate(df, id_columns, agg_columns_func):
+    # Monta funções de agrupamento
+    agg_func = {}
+    for i in range(0, len(df.columns)):
+        agg_func[df.columns[i]] = agg_columns_func[i]
+    print(agg_func)
+    
     # Calcula os IDs para agrupamento
     id = np.array([])
     for i in range(0, df.shape[0]):
-        id_calc = df['Supply Site Code'][i] + str(df['SKU'][i]) + df['Location Code'][i] + df['Location Type'][i]
+        id_calc = ''
+        for j in range(0, len(id_columns)):
+            if df.dtypes[id_columns[j]] == object:
+                id_calc += df[id_columns[j]][i]
+            else:
+                id_calc += str(df[id_columns[j]][i])
         id = np.append(id, id_calc)
     df['ID'] = id
-
+    
     # Verifica se existem valores iguais após a ordenação
     df.sort_values(['ID'], inplace=True)
     for i in range(0, df.shape[0] - 1):
         if df['ID'][i] == df['ID'][i+1]:
             print('O próximo é igual nesse índice:' + str(i))
 
-    # Agrupa valores iguais de ID
-    agg_func = {
-                'Supply Site Code'   : 'first',
-                'SKU'                : 'first',
-                'Location Code'      : 'first',
-                'Location Type'      : 'first',
-                'MinDOC (Hl)'        : 'sum',
-                'Reorder Point (Hl)' : 'sum',
-                'MaxDOC (Hl)'        : 'sum',
-                'Closing Stock'      : 'sum',
-                'Current CS/MIN'     : 'first',
-                'Current CS/ROP'     : 'first',
-                'Current CS/MAX'     : 'first',
-                'Distributor Orders' : 'sum',
-                'Available to Deploy': 'sum',
-                'Scenario'           : 'first'
-               }
+    # Agrupa valores iguais de ID 
     df = df.groupby(df['ID']).aggregate(agg_func)
 
     df.reset_index(drop=True, inplace=True)
@@ -69,16 +67,16 @@ def clear(df):
     return df
 
 def supply_site_count(df):
+    # Contagem de todos os Supply Sites 
     supply_sites = np.array([])
     for i in range(0, len(df)):
         if not np.isin(df['Supply Site Code'][i], supply_sites):
             supply_sites = np.append(df['Supply Site Code'][i], supply_sites)
     print(supply_sites)
 
-
-df = aggregate(df)
+df = aggregate(df, id_columns, agg_columns_func)
 df = clear(df)
 
-df.to_csv('../clearData.csv', index=False)
-df.to_excel('../clearData.xlsx', index=False)
+df.to_csv('dataset/clearData.csv', index=False)
+df.to_excel('dataset/clearData.xlsx', index=False)
 

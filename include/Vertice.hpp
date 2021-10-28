@@ -26,7 +26,8 @@ class Vertice {
         void setAvailable(product_t produto, doc_t newAvailable);
         const std::list<Aresta>& listaDeAdjacencia() const;
 
-        void addAdjacente(sitecode_t id);
+        void addAdjacente(sitecode_t id, product_t produto, 
+                doc_t minDoc, doc_t rP, doc_t maxDoc, doc_t cS, doc_t dO);
 };
 
 #endif // VERTICE_HPP

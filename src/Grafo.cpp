@@ -121,7 +121,8 @@ void Grafo::addVertice(sitecode_t _id, loctype_t locationType)
     this->listaVertices[_id] = Vertice(_id, locationType);
 }
 
-void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2) // TODO: adicionar o resto dos parametros
+void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2, product_t produto,
+                doc_t minDoc, doc_t rP, doc_t maxDoc, doc_t cS, doc_t dO)
 {
 #define TEST_VERTICE(v, id)                                                    \
     do {                                                                       \
@@ -139,12 +140,14 @@ void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2) // TODO: adicionar o res
         TEST_VERTICE(origem, id1);
         TEST_VERTICE(destino, id2);
 
-        origem->addAdjacente(id2);
+        origem->addAdjacente(id2, produto, 
+                minDoc, rP, maxDoc, cS, dO);
     } else {
         Vertice *v = this->getVerticeById(id1);
 
         TEST_VERTICE(v, id1);
-        v->addAdjacente(id1);
+        v->addAdjacente(id1, produto, 
+                minDoc, rP, maxDoc, cS, dO);
     }
     this->_numeroDeArestas++;
 }

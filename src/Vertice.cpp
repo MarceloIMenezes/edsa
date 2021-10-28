@@ -28,14 +28,15 @@ void Vertice::setAvailable(product_t produto, doc_t newAvailable)
     this->availableToDeploy.at(produto) = newAvailable;
 }
 
-void Vertice::addAdjacente(sitecode_t id)
+void Vertice::addAdjacente(sitecode_t id, product_t produto, 
+                doc_t minDoc, doc_t rP, doc_t maxDoc, doc_t cS, doc_t dO)
 {
     for (const Aresta& a : this->listaAresta) {
         if (a.idDestino() == id) {
             return;
         }
     }
-    this->listaAresta.push_back(Aresta(this->id(), id, "0", 0, 0, 0, 0, 0)); // TODO: add os parametros das arestas aqui
+    this->listaAresta.push_back(Aresta(this->id(), id, produto, minDoc, rP, maxDoc, cS, dO));
 }
 
 const std::list<Aresta>& Vertice::listaDeAdjacencia() const

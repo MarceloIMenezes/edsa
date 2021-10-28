@@ -27,7 +27,8 @@ class Grafo {
         size_t numeroDeArestas() const;
 
         void addVertice(sitecode_t id, loctype_t locationType);
-        void fazerAresta(sitecode_t id1, sitecode_t id2);
+        void fazerAresta(sitecode_t id1, sitecode_t id2, product_t produto, 
+                doc_t minDoc, doc_t rP, doc_t maxDoc, doc_t cS, doc_t dO);
         void toDots(std::ostream& arqSaida) const;
 
     private:

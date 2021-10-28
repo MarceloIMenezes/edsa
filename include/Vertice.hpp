@@ -17,11 +17,12 @@ class Vertice {
         std::map<product_t, doc_t> availableToDeploy;
 
     public:
-        Vertice(sitecode_t id);
+        Vertice(sitecode_t id, loctype_t loctype);
 
         sitecode_t id() const;
         loctype_t loctype() const;
-        doc_t available(product_t produto);
+        doc_t available(product_t produto) const;
+        void setAvailable(product_t produto, doc_t newAvailable);
         const std::list<Aresta>& listaDeAdjacencia() const;
 
         void addAdjacente(sitecode_t id);

@@ -5,36 +5,33 @@
 #include <vector>
 #include <ostream>
 #include <istream>
+#include <unordered_map>
 
 #include "Vertice.hpp"
 
 class Grafo {
-    private:
-        using vertexlist_t = std::vector<Vertice>;
+    public:
+        using vertexcontainer_t = std::unordered_map<sitecode_t, Vertice>;
 
+    private:
         // Atributos
-        vertexlist_t listaVertices;
+        vertexcontainer_t listaVertices;
+        size_t _numeroDeArestas;
 
     public:
-        Grafo(size_t numeroDeVertices);
+        Grafo();
 
         static Grafo gerarDoArquivo(std::istream& arqEntrada);
 
         size_t numeroDeVertices() const;
+        size_t numeroDeArestas() const;
 
         void fazerAresta(sitecode_t id1, sitecode_t id2);
         void toDots(std::ostream& arqSaida) const;
 
-        Grafo algoritmoGuloso() const;
-        Grafo algoritmoGulosoRandomizado(double alfa, size_t nIteracoes) const;
-        Grafo algoritmoGulosoRandomizadoReativo(
-                const std::vector<double>& alfas, size_t nIteracoes,
-                size_t tamanhoBloco) const;
-
     private:
-        Grafo algoritmoGulosoHelper(double alfa) const;
-        const Vertice *getVerticeById(sitecode_t id) const;
-        Vertice *getVerticeById(sitecode_t id);
+        const Vertice *getVerticeById(const sitecode_t& id) const;
+        Vertice *getVerticeById(const sitecode_t& id);
 };
 
 #endif // GRAFO_HPP

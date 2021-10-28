@@ -1,7 +1,11 @@
-libgrafo.so: main.cpp ./src/*
-	g++ -shared -Wl,-soname,$@ -fPIC -o $@ $^ -I ./include
+CXX=g++
+INC=-I ./include
+CFLAGS=-std=c++11 -W -Wall -pedantic $(INC)
+
+edsa: main.cpp ./src/*
+	$(CXX) $(CFLAGS) -o $@ $^
 
 clean:
-	rm -f execGrupo4
+	rm -f edsa
 
 .PHONY: clean

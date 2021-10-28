@@ -3,12 +3,13 @@
 
 #include <string>
 
-using sitecode_t = size_t;
-using doc_t = size_t;
+using sitecode_t = std::string;
+using doc_t = double;
 using product_t = std::string;
 
 class Aresta {
     private:
+        sitecode_t _idOrigem;
         sitecode_t _idDestino;
         product_t _produto;
         doc_t _minDoc;
@@ -18,8 +19,10 @@ class Aresta {
         doc_t _distributionOrder;
 
     public:
-        Aresta(sitecode_t idVertice, product_t produto, doc_t minDoc, doc_t rP, doc_t maxDoc, doc_t cS, doc_t dO);
+        Aresta(sitecode_t idOrigem, sitecode_t idDestino, product_t produto, 
+                doc_t minDoc, doc_t rP, doc_t maxDoc, doc_t cS, doc_t dO);
 
+        sitecode_t idOrigem() const;
         sitecode_t idDestino() const;
         product_t produto() const;
         doc_t minDoc() const;
@@ -27,6 +30,7 @@ class Aresta {
         doc_t maxDoc() const;
         doc_t closingStock() const;
         doc_t distributionOrder() const;
+        void setDistributionOrder(doc_t newOrder);
 };
 
 #endif // ARESTA_HPP

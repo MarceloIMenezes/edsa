@@ -166,6 +166,11 @@ void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2, product_t produto,
     this->_numeroDeArestas++;
 }
 
+void Grafo::cenario1()
+{
+
+}
+
 void Grafo::toDots(std::ostream& arqSaida) const
 {
 #ifdef DEBUG

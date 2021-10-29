@@ -4,6 +4,11 @@
 
 using namespace std;
 
+static void cenario1(const Grafo& g, std::ofstream& out)
+{
+
+}
+
 static void toDots(const Grafo& g, std::ofstream& out)
 {
     g.toDots(out);
@@ -13,7 +18,8 @@ static struct MenuOption {
     const char *optName;
     void (*action)(const Grafo& g, std::ofstream&);
 } menuOpts[] = {
-    { "To dots", toDots }
+    { "To dots"  , toDots   },
+    { "Cenário 1", cenario1 }
 };
 
 #define OPTS_SIZE (sizeof(menuOpts) / sizeof(MenuOption))

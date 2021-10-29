@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     const char *programName = *argv;
 
     if (argc != 3) {
-        std::cerr << "Uso: " << *programName
+        std::cerr << "Uso: " << programName
                   << " ARQUIVO_ENTRADA ARQUIVO_SAIDA\n";
         return EXIT_INVAL_ARGC;
     }

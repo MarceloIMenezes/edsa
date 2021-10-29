@@ -56,9 +56,8 @@ Grafo Grafo::fromCsv(std::istream& csvFile)
         doc_t distributorOrder;
         doc_t availableToDeploy;
 
-        size_t pos = 0;
-
         std::string tmp;
+        size_t pos = 0;
 
         csvFieldParser(linha, ssc, &pos);
         csvFieldParser(linha, produto, &pos);
@@ -84,8 +83,19 @@ Grafo Grafo::fromCsv(std::istream& csvFile)
         std::cerr << '\n';
 #endif
 
+        g.addVertice({ ssc,  "DEP", produto, availableToDeploy });
+        g.addVertice({ locationCode, locationType });
 
-
+        g.fazerAresta(
+            ssc,
+            locationCode,
+            produto,
+            minDoc,
+            rop,
+            maxDoc,
+            closingStock,
+            distributorOrder
+        );
     }
     return g;
 }
@@ -116,9 +126,11 @@ size_t Grafo::numeroDeArestas() const
     return this->_numeroDeArestas;
 }
 
-void Grafo::addVertice(sitecode_t _id, loctype_t locationType)
+void Grafo::addVertice(Vertice&& v)
 {
-    this->listaVertices[_id] = Vertice(_id, locationType);
+    if (this->getVerticeById(v.id()) == nullptr) {
+        this->listaVertices[v.id()] = std::move(v);
+    }
 }
 
 void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2, product_t produto,
@@ -140,13 +152,13 @@ void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2, product_t produto,
         TEST_VERTICE(origem, id1);
         TEST_VERTICE(destino, id2);
 
-        origem->addAdjacente(id2, produto, 
+        origem->addAdjacente(id2, produto,
                 minDoc, rP, maxDoc, cS, dO);
     } else {
         Vertice *v = this->getVerticeById(id1);
 
         TEST_VERTICE(v, id1);
-        v->addAdjacente(id1, produto, 
+        v->addAdjacente(id1, produto,
                 minDoc, rP, maxDoc, cS, dO);
     }
     this->_numeroDeArestas++;
@@ -154,14 +166,29 @@ void Grafo::fazerAresta(sitecode_t id1, sitecode_t id2, product_t produto,
 
 void Grafo::toDots(std::ostream& arqSaida) const
 {
-    arqSaida << "graph {\n";
-    for (const std::pair<sitecode_t, Vertice> it : this->listaVertices) {
-        const Vertice& v = it.second;
+#ifdef DEBUG
+    size_t count = 0;
+#endif
+    auto begin = this->listaVertices.cbegin();
+    auto end = this->listaVertices.cend();
+    arqSaida << "digraph {\n";
+    for (auto it = begin; it != end; ++it) {
+        const Vertice& v = it->second;
+#ifdef DEBUG
+        ++count;
+        std::cerr << "Número de arestas do vértice `" << v.id() << "`: "
+            << v.listaDeAdjacencia().size() << '\n';
+#endif
+        if (v.ehIsolado()) {
+            arqSaida << "\t\"" << v.id() << "\";\n";
+            continue;
+        }
         for (const Aresta& a : v.listaDeAdjacencia()) {
-            if (v.id() < a.idDestino()) {
-                arqSaida << "\t" << v.id() << " -- " << a.idDestino() << "\n";
-            }
+            arqSaida << "\t\"" << v.id() << "\" -> \"" << a.idDestino() << "\";\n";
         }
     }
     arqSaida << "}";
+#ifdef DEBUG
+    std::cerr << __PRETTY_FUNCTION__ << " Número de vértices:"<< count << '\n';
+#endif
 }

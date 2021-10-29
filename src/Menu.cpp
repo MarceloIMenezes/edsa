@@ -31,6 +31,10 @@ void Menu::run(const Grafo& g, std::ofstream &out)
         std::cout << "*********************************************\n";
         std::cout << "** Efficient Distribution System Algorithm **\n";
         std::cout << "*********************************************\n";
+#ifdef DEBUG
+        std::cout << "Número de vértices: " << g.numeroDeVertices() << '\n';
+        std::cout << "Número de arestas: " << g.numeroDeArestas() << '\n';
+#endif
 
         for (size_t i = 0; i < OPTS_SIZE; ++i) {
             std::cout << (i + 1) << " - " << menuOpts[i].optName << '\n';

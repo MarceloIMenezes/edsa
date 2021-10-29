@@ -5,13 +5,12 @@
 #include <vector>
 #include <ostream>
 #include <istream>
-#include <unordered_map>
 
 #include "Vertice.hpp"
 
 class Grafo {
     public:
-        using vertexcontainer_t = std::unordered_map<sitecode_t, Vertice>;
+        using vertexcontainer_t = std::map<sitecode_t, Vertice>;
 
     private:
         // Atributos
@@ -26,7 +25,7 @@ class Grafo {
         size_t numeroDeVertices() const;
         size_t numeroDeArestas() const;
 
-        void addVertice(sitecode_t id, loctype_t locationType);
+        void addVertice(Vertice&& v);
         void fazerAresta(sitecode_t id1, sitecode_t id2, product_t produto, 
                 doc_t minDoc, doc_t rP, doc_t maxDoc, doc_t cS, doc_t dO);
         void toDots(std::ostream& arqSaida) const;

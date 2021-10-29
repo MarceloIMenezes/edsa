@@ -15,7 +15,9 @@
 
 using namespace std;
 
-Grafo::Grafo()
+Grafo::Grafo():
+    listaVertices(),
+    _numeroDeArestas(0)
 {
 }
 

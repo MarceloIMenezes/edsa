@@ -30,6 +30,8 @@ class Grafo {
                 doc_t minDoc, doc_t rP, doc_t maxDoc, doc_t cS, doc_t dO);
         void toDots(std::ostream& arqSaida) const;
 
+
+        void cenario1();
     private:
         const Vertice *getVerticeById(const sitecode_t& id) const;
         Vertice *getVerticeById(const sitecode_t& id);
